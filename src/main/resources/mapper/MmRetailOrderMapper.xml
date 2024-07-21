@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kj.zpyj.data.south.adapter.repository.MmRetailOrderMapper">
+    <select id="selectMmRetailOrderItemByOrderCode" resultType="com.kj.zpyj.data.domain.MmRetailOrderItem">
+        SELECT
+        ro.order_code,ro.member_id,rog.barcode_id,rog.xnum,rog.retail_price,gm.only_coding,gm.goods_title,su.unit_name,pu.imgs_original
+        FROM retail_order ro inner join retail_order_goods rog on ro.order_id=rog.order_id
+        left join goods_barcode gb on rog.barcode_id=gb.barcode_id left join goods_spec gs on gb.goods_id=gs.goods_id
+        left join goods_main gm on gs.g_m_id=gm.g_m_id left join sys_units su on gm.unit_id=su.sys_unit_id
+        left JOIN pt_uimgs pu on gm.pic_id = pu.imgs_id
+        where ro.order_code=#{orderId}
+
+    </select>
+    <select id="selectMmRetailOrderPaysByOrderCode" resultType="com.kj.zpyj.data.domain.MmRetailOrderPay">
+        select rop.pay_method,rop.pay_money,rop.discount_money,rop.pay_code,rop.pay_serial_no from retail_order_pays rop
+        where rop.order_code=#{orderId}
+
+    </select>
+
+</mapper>
