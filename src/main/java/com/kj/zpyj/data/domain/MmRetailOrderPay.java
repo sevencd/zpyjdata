@@ -11,8 +11,8 @@ import java.math.BigDecimal;
 
 @Getter
 public class MmRetailOrderPay {
-    private int pay_method;
-    private BigDecimal pay_money;
-    private String pay_code;
-    private String pay_serial_no;
+    private int payMethod;
+    private BigDecimal payMoney;
+    private String payCode;
+    private String paySerialNo;
 }

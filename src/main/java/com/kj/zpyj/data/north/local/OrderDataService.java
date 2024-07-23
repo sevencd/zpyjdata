@@ -1,11 +1,12 @@
 package com.kj.zpyj.data.north.local;
 
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.kj.zpyj.data.domain.*;
 import com.kj.zpyj.data.south.adapter.repository.*;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -31,37 +32,58 @@ public class OrderDataService {
         this.zpyjUserMapper = zpyjUserMapper;
         this.mmRetailOrderMapper = mmRetailOrderMapper;
     }
+
     /**
      * 补充订单商品和支付信息
      */
-    public void recoveryOrderData(){
+    public void recoveryOrderData() {
         //找出时间范围内没有订单商品和支付信息的订单
-        List<ZpyjOrder> zpyjOrders=zpyjOrderMapper.selectOrders();
+        List<ZpyjOrder> zpyjOrders = zpyjOrderMapper.selectOrders();
         //循环每一个订单，去淼迈查找对应的零售单商品和支付信息
         //把商品和支付信息依次添加到zpyj数据库，并增加成长值和消费记录
-        for (ZpyjOrder zpyjOrder:zpyjOrders){
+        for (ZpyjOrder zpyjOrder : zpyjOrders) {
             BigDecimal payMoney = BigDecimal.ZERO;
 
-            List<MmRetailOrderItem> mmRetailOrderItems =mmRetailOrderMapper.selectMmRetailOrderItemByOrderCode(zpyjOrder.getOrderId());
-            for(MmRetailOrderItem mmRetailOrderItem:mmRetailOrderItems){
-                ZpyjOrderItem zpyjOrderItem=ZpyjOrderItem.createOrderItem(zpyjOrder.getPayId(),zpyjOrder.getOrderId(),mmRetailOrderItem);
-                zpyjOrderItemMapper.insert(zpyjOrderItem    );
+            List<MmRetailOrderItem> mmRetailOrderItems = mmRetailOrderMapper.selectMmRetailOrderItemByOrderCode(zpyjOrder.getOrderId());
+            for (MmRetailOrderItem mmRetailOrderItem : mmRetailOrderItems) {
+                ZpyjOrderItem zpyjOrderItem = ZpyjOrderItem.createOrderItem(zpyjOrder.getPayId(), zpyjOrder.getOrderId(), mmRetailOrderItem);
+                zpyjOrderItemMapper.insert(zpyjOrderItem);
 
             }
-            List<MmRetailOrderPay> mmRetailOrderPays =mmRetailOrderMapper.selectMmRetailOrderPaysByOrderCode(zpyjOrder.getOrderId());
-            for(MmRetailOrderPay mmRetailOrderPay:mmRetailOrderPays){
-                payMoney=mmRetailOrderPay.getPay_money();
-                ZpyjOrderPay zpyjOrderPay=ZpyjOrderPay.createZpyjOrderPay(zpyjOrder.getOrderId(),mmRetailOrderPay);
+            List<MmRetailOrderPay> mmRetailOrderPays = mmRetailOrderMapper.selectMmRetailOrderPaysByOrderCode(zpyjOrder.getOrderId());
+            for (MmRetailOrderPay mmRetailOrderPay : mmRetailOrderPays) {
+                payMoney = mmRetailOrderPay.getPayMoney();
+                ZpyjOrderPay zpyjOrderPay = ZpyjOrderPay.createZpyjOrderPay(zpyjOrder.getOrderId(), mmRetailOrderPay);
                 zpyjOrderPayMapper.insert(zpyjOrderPay);
             }
-            ZpyjUserGrowthRecord zpyjUserGrowthRecord=ZpyjUserGrowthRecord.of(zpyjOrder.getCustomerId(),payMoney,CostType.CONSUME.getDesc(), LocalDateTime.now());
-            ZpyjUserCost zpyjUserCost=ZpyjUserCost.of(zpyjOrder.getCustomerId(),payMoney,LocalDateTime.now(),CostType.CONSUME);
+            ZpyjUserGrowthRecord zpyjUserGrowthRecord = ZpyjUserGrowthRecord.of(zpyjOrder.getCustomerId(), payMoney, GrowthType.CONSUME.getDesc(), zpyjOrder.getPlaceOrderTime());
+            ZpyjUserCost zpyjUserCost = ZpyjUserCost.of(zpyjOrder.getCustomerId(), payMoney, zpyjOrder.getPlaceOrderTime(), CostType.CONSUME);
             zpyjUserGrowthRecordMapper.insert(zpyjUserGrowthRecord);
-            ZpyjUser zpyjUser=zpyjUserMapper.selectById(zpyjOrder.getCustomerId());
+            ZpyjUser zpyjUser = zpyjUserMapper.selectById(zpyjOrder.getCustomerId());
             zpyjUser.addGrowth(payMoney);
             zpyjUserMapper.updateById(zpyjUser);
             zpyjUserCostMapper.insert(zpyjUserCost);
         }
+    }
 
+    /**
+     * 恢复商品数量
+     */
+    public void recoveryOrderItemData() {
+        //找出时间范围内没有订单商品和支付信息的订单
+        List<ZpyjOrderItem> zpyjOrders = zpyjOrderMapper.selectOrderItems();
+        //循环每一个订单，去淼迈查找对应的零售单商品和支付信息
+        //把商品和支付信息依次添加到zpyj数据库，并增加成长值和消费记录
+        for (ZpyjOrderItem zpyjOrderItem : zpyjOrders) {
+            List<MmRetailOrderItem> mmRetailOrderItems = mmRetailOrderMapper.selectMmRetailOrderItemByOrderCode(zpyjOrderItem.getOrderId());
+            for (MmRetailOrderItem mmRetailOrderItem : mmRetailOrderItems) {
+                LambdaUpdateWrapper<ZpyjOrderItem> lambdaUpdateWrapper = Wrappers.lambdaUpdate();
+                lambdaUpdateWrapper.eq(ZpyjOrderItem::getOrderId, zpyjOrderItem.getOrderId());
+                lambdaUpdateWrapper.eq(ZpyjOrderItem::getSkuId, mmRetailOrderItem.getOnlyCoding());
+                lambdaUpdateWrapper.set(ZpyjOrderItem::getCount, mmRetailOrderItem.getXnum());
+                zpyjOrderItemMapper.update(null, lambdaUpdateWrapper);
+            }
+
+        }
     }
 }

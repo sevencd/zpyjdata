@@ -42,10 +42,10 @@ public class ZpyjOrderPay {
     public static ZpyjOrderPay createZpyjOrderPay(String orderId, MmRetailOrderPay mmRetailOrderPay) {
         ZpyjOrderPay zpyjOrderPay = new ZpyjOrderPay();
         zpyjOrderPay.orderCode = orderId;
-        zpyjOrderPay.payWay = mmRetailOrderPay.getPay_method();
-        zpyjOrderPay.payMoney = mmRetailOrderPay.getPay_money();
-        zpyjOrderPay.payCode = mmRetailOrderPay.getPay_code();
-        zpyjOrderPay.paySerialNo = mmRetailOrderPay.getPay_serial_no();
+        zpyjOrderPay.payWay = mmRetailOrderPay.getPayMethod();
+        zpyjOrderPay.payMoney = mmRetailOrderPay.getPayMoney();
+        zpyjOrderPay.payCode = mmRetailOrderPay.getPayCode();
+        zpyjOrderPay.paySerialNo = mmRetailOrderPay.getPaySerialNo();
 
         return zpyjOrderPay;
     }

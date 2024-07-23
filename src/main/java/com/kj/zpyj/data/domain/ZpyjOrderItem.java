@@ -2,6 +2,7 @@ package com.kj.zpyj.data.domain;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.kj.zpyj.data.util.BigDecimalUtil;
+import lombok.Getter;
 
 import java.math.BigDecimal;
 
@@ -10,6 +11,7 @@ import java.math.BigDecimal;
  * @date 2024/7/20
  */
 @TableName("order_item")
+@Getter
 public class ZpyjOrderItem {
     private String payId;
     private String orderId;

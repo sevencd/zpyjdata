@@ -14,7 +14,6 @@
     <select id="selectMmRetailOrderPaysByOrderCode" resultType="com.kj.zpyj.data.domain.MmRetailOrderPay">
         select rop.pay_method,rop.pay_money,rop.discount_money,rop.pay_code,rop.pay_serial_no from retail_order_pays rop
         where rop.order_code=#{orderId}
-
     </select>
 
 </mapper>
