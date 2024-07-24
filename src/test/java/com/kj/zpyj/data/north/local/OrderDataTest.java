@@ -12,7 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
-import java.util.Iterator;
+// Bug 修复：移除了无用的 Iterator 导包
 import java.util.List;
 import com.kj.zpyj.data.Application;
 @RunWith(SpringRunner.class)
