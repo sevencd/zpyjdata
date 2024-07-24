@@ -20,5 +20,17 @@
     <select id="selectOrderItems" resultType="com.kj.zpyj.data.domain.ZpyjOrderItem">
         select oi.order_id from order_item oi where oi.count&gt;=100 group by oi.order_id
     </select>
+    <select id="selectOrdersDiscount" resultType="com.kj.zpyj.data.domain.ZpyjOrdersReady">
+        select * from orders_ready r where r.paid_amount &lt;0
+    </select>
+    <select id="selectOrders2" resultType="com.kj.zpyj.data.domain.ZpyjOrder">
+        select * from orders  o where o.paid_amount&lt;0
+    </select>
+    <select id="selectOrdersReadyPaidDiscountEquals0" resultType="com.kj.zpyj.data.domain.ZpyjOrdersReady">
+        select * from orders_ready r where r.paid_amount=0
+    </select>
+    <select id="selectOrdersPaidDiscountEquals0" resultType="com.kj.zpyj.data.domain.ZpyjOrder">
+        select * from orders o where o.paid_amount=0
+    </select>
 
 </mapper>

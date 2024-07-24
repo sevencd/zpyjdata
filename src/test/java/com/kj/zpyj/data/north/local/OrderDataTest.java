@@ -4,6 +4,7 @@ package com.kj.zpyj.data.north.local;
  * @since 2024/2/20
  */
 
+import com.kj.zpyj.data.Application;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,7 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
-import com.kj.zpyj.data.Application;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {Application.class})
 public class OrderDataTest {
@@ -33,5 +34,10 @@ public class OrderDataTest {
     @Test
     public void testRecoveryOrderItemData() {
         orderDataService.recoveryOrderItemData();
+    }
+
+    @Test
+    public void recoveryOrderDiscountData() {
+        orderDataService.recoveryOrderDiscountData();
     }
 }

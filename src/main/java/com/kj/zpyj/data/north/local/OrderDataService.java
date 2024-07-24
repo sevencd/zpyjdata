@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.kj.zpyj.data.domain.*;
 import com.kj.zpyj.data.south.adapter.repository.*;
+import com.kj.zpyj.data.util.BigDecimalUtil;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -15,6 +16,7 @@ import java.util.List;
  */
 @Service
 public class OrderDataService {
+    private final ZpyjOrderReadyMapper zpyjOrderReadyMapper;
     private final ZpyjOrderMapper zpyjOrderMapper;
     private final ZpyjOrderItemMapper zpyjOrderItemMapper;
     private final ZpyjOrderPayMapper zpyjOrderPayMapper;
@@ -23,7 +25,8 @@ public class OrderDataService {
     private final ZpyjUserMapper zpyjUserMapper;
     private final MmRetailOrderMapper mmRetailOrderMapper;
 
-    public OrderDataService(ZpyjOrderMapper zpyjOrderMapper, ZpyjOrderItemMapper zpyjOrderItemMapper, ZpyjOrderPayMapper zpyjOrderPayMapper, ZpyjUserGrowthRecordMapper zpyjUserGrowthRecordMapper, ZpyjUserCostMapper zpyjUserCostMapper, ZpyjUserMapper zpyjUserMapper, MmRetailOrderMapper mmRetailOrderMapper) {
+    public OrderDataService(ZpyjOrderReadyMapper zpyjOrderReadyMapper, ZpyjOrderMapper zpyjOrderMapper, ZpyjOrderItemMapper zpyjOrderItemMapper, ZpyjOrderPayMapper zpyjOrderPayMapper, ZpyjUserGrowthRecordMapper zpyjUserGrowthRecordMapper, ZpyjUserCostMapper zpyjUserCostMapper, ZpyjUserMapper zpyjUserMapper, MmRetailOrderMapper mmRetailOrderMapper) {
+        this.zpyjOrderReadyMapper = zpyjOrderReadyMapper;
         this.zpyjOrderMapper = zpyjOrderMapper;
         this.zpyjOrderItemMapper = zpyjOrderItemMapper;
         this.zpyjOrderPayMapper = zpyjOrderPayMapper;
@@ -84,6 +87,40 @@ public class OrderDataService {
                 zpyjOrderItemMapper.update(null, lambdaUpdateWrapper);
             }
 
+        }
+    }
+    public void recoveryOrderDiscountData() {
+        //找出优惠数据不对的订单
+        List<ZpyjOrdersReady> zpyjOrdersReadies = zpyjOrderMapper.selectOrdersDiscount();
+        for (ZpyjOrdersReady zpyjOrdersReady : zpyjOrdersReadies){
+            BigDecimal discountAmount = zpyjOrdersReady.getPaidAmount();
+            BigDecimal paidAmount = zpyjOrdersReady.getWalletFee();
+            //更新订单实付金额和优惠金额
+            LambdaUpdateWrapper<ZpyjOrdersReady> lambdaUpdateWrapper = Wrappers.lambdaUpdate();
+            lambdaUpdateWrapper.eq(ZpyjOrdersReady::getId, zpyjOrdersReady.getId());
+            lambdaUpdateWrapper.set(ZpyjOrdersReady::getPaidAmount, paidAmount);
+            lambdaUpdateWrapper.set(ZpyjOrdersReady::getDiscountAmount, discountAmount);
+            zpyjOrderReadyMapper.update(null, lambdaUpdateWrapper);
+        }
+        List<ZpyjOrder> zpyjOrders = zpyjOrderMapper.selectOrders2();
+        for(ZpyjOrder zpyjOrder : zpyjOrders){
+            BigDecimal discountAmount = zpyjOrder.getPaidAmount();
+            BigDecimal paidAmount = zpyjOrder.getWalletFee();
+            //更新订单实付金额和优惠金额
+            LambdaUpdateWrapper<ZpyjOrder> lambdaUpdateWrapper2 = Wrappers.lambdaUpdate();
+            lambdaUpdateWrapper2.eq(ZpyjOrder::getOrderId, zpyjOrder.getOrderId());
+            lambdaUpdateWrapper2.set(ZpyjOrder::getPaidAmount, paidAmount);
+            lambdaUpdateWrapper2.set(ZpyjOrder::getDiscountAmount, discountAmount);
+            zpyjOrderMapper.update(null, lambdaUpdateWrapper2);
+            //更新商品价格
+            List<MmRetailOrderItem> mmRetailOrderItems = mmRetailOrderMapper.selectMmRetailOrderItemByOrderCode(zpyjOrder.getOrderId());
+            for (MmRetailOrderItem mmRetailOrderItem : mmRetailOrderItems) {
+                LambdaUpdateWrapper<ZpyjOrderItem> lambdaUpdateWrapper = Wrappers.lambdaUpdate();
+                lambdaUpdateWrapper.eq(ZpyjOrderItem::getOrderId, zpyjOrder.getOrderId());
+                lambdaUpdateWrapper.eq(ZpyjOrderItem::getSkuId, mmRetailOrderItem.getOnlyCoding());
+                lambdaUpdateWrapper.set(ZpyjOrderItem::getSkuPrice, BigDecimalUtil.getFenPrice(mmRetailOrderItem.getRetailPrice()));
+                zpyjOrderItemMapper.update(null, lambdaUpdateWrapper);
+            }
         }
     }
 }
