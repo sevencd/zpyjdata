@@ -55,9 +55,7 @@ public class ZpyjOrdersReady {
      */
     private LocalDateTime payTime;
     private String payState;
-    private BigDecimal walletFee;
 
-    private String couponCode;
     /**
      * 打包费
      */

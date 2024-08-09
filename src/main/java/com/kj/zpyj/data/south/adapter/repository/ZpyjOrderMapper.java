@@ -13,12 +13,6 @@ import java.util.List;
  */
 public interface ZpyjOrderMapper extends BaseMapper<ZpyjOrder> {
     List<ZpyjOrder> selectOrders();
-    List<ZpyjOrderItem> selectOrderItems();
 
-    List<ZpyjOrdersReady> selectOrdersDiscount();
-
-    List<ZpyjOrder> selectOrders2();
-
-    List<ZpyjOrdersReady> selectOrdersReadyPaidDiscountEquals0();
-    List<ZpyjOrder> selectOrdersPaidDiscountEquals0();
+    List<ZpyjOrdersReady> selectOrdersReady();
 }

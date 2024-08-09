@@ -10,27 +10,16 @@
         from
         orders_ready as r
         inner join orders as o on r.id = o.pay_id
-        left join order_pays as p on o.order_id = p.order_code
+        left join order_pays as p on o.order_id = p.order_id
         where
         r.place_order_time &gt;='2024-07-14 17:36:06'
         and r.place_order_time &lt;='2024-07-15 09:29:19'
         order by
         r.place_order_time asc;
     </select>
-    <select id="selectOrderItems" resultType="com.kj.zpyj.data.domain.ZpyjOrderItem">
-        select oi.order_id from order_item oi where oi.count&gt;=100 group by oi.order_id
+    <select id="selectOrdersReady" resultType="com.kj.zpyj.data.domain.ZpyjOrdersReady">
+        select
+        r.*
+        from orders_ready r left join orders o on r.id=o.pay_id where o.order_id is null order by r.place_order_time asc;
     </select>
-    <select id="selectOrdersDiscount" resultType="com.kj.zpyj.data.domain.ZpyjOrdersReady">
-        select * from orders_ready r where r.paid_amount &lt;0
-    </select>
-    <select id="selectOrders2" resultType="com.kj.zpyj.data.domain.ZpyjOrder">
-        select * from orders  o where o.paid_amount&lt;0
-    </select>
-    <select id="selectOrdersReadyPaidDiscountEquals0" resultType="com.kj.zpyj.data.domain.ZpyjOrdersReady">
-        select * from orders_ready r where r.paid_amount=0
-    </select>
-    <select id="selectOrdersPaidDiscountEquals0" resultType="com.kj.zpyj.data.domain.ZpyjOrder">
-        select * from orders o where o.paid_amount=0
-    </select>
-
 </mapper>

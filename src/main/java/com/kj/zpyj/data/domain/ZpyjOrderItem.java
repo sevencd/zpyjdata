@@ -15,10 +15,10 @@ import java.math.BigDecimal;
 public class ZpyjOrderItem {
     private String payId;
     private String orderId;
-    private int goodsProfileId;
+    private Integer goodsProfileId;
     private String skuId;
-    private int barcodeId;
-    private int goodsId;
+    private Integer barcodeId;
+    private Integer goodsId;
     private String skuName;
     private String skuImage;
     private BigDecimal skuPrice;

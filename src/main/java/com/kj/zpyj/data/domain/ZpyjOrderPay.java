@@ -3,6 +3,7 @@ package com.kj.zpyj.data.domain;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.kj.zpyj.data.util.BigDecimalUtil;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -18,13 +19,9 @@ public class ZpyjOrderPay {
     /**
      * 订单号
      */
-    private String orderCode;
+    private String orderId;
     private int payWay;
     private BigDecimal payMoney;
-    /**
-     * 支付时间
-     */
-    private LocalDateTime payTime;
     /**
      * 支付单号
      */
@@ -41,9 +38,9 @@ public class ZpyjOrderPay {
 
     public static ZpyjOrderPay createZpyjOrderPay(String orderId, MmRetailOrderPay mmRetailOrderPay) {
         ZpyjOrderPay zpyjOrderPay = new ZpyjOrderPay();
-        zpyjOrderPay.orderCode = orderId;
+        zpyjOrderPay.orderId = orderId;
         zpyjOrderPay.payWay = mmRetailOrderPay.getPayMethod();
-        zpyjOrderPay.payMoney = mmRetailOrderPay.getPayMoney();
+        zpyjOrderPay.payMoney = BigDecimalUtil.multiply(mmRetailOrderPay.getPayMoney(), 100);
         zpyjOrderPay.payCode = mmRetailOrderPay.getPayCode();
         zpyjOrderPay.paySerialNo = mmRetailOrderPay.getPaySerialNo();
 

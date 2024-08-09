@@ -31,13 +31,4 @@ public class OrderDataTest {
         orderDataService.recoveryOrderData();
     }
 
-    @Test
-    public void testRecoveryOrderItemData() {
-        orderDataService.recoveryOrderItemData();
-    }
-
-    @Test
-    public void recoveryOrderDiscountData() {
-        orderDataService.recoveryOrderDiscountData();
-    }
 }
