@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.kj.zpyj.data.util.BigDecimalUtil;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 /**
  * @author nick
@@ -40,7 +39,7 @@ public class ZpyjOrderPay {
         ZpyjOrderPay zpyjOrderPay = new ZpyjOrderPay();
         zpyjOrderPay.orderId = orderId;
         zpyjOrderPay.payWay = mmRetailOrderPay.getPayMethod();
-        zpyjOrderPay.payMoney = BigDecimalUtil.multiply(mmRetailOrderPay.getPayMoney(), 100);
+        zpyjOrderPay.payMoney = BigDecimalUtil.getFenPrice(mmRetailOrderPay.getPayMoney());
         zpyjOrderPay.payCode = mmRetailOrderPay.getPayCode();
         zpyjOrderPay.paySerialNo = mmRetailOrderPay.getPaySerialNo();
 

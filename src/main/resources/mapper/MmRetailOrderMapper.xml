@@ -3,7 +3,14 @@
 <mapper namespace="com.kj.zpyj.data.south.adapter.repository.MmRetailOrderMapper">
     <select id="selectMmRetailOrderItemByOrderCode" resultType="com.kj.zpyj.data.domain.MmRetailOrderItem">
         SELECT
-        ro.order_code,ro.member_id,rog.barcode_id,rog.xnum,rog.retail_price,gm.only_coding,gm.goods_title,su.unit_name,pu.imgs_original
+        ro.order_code,ro.member_id,rog.barcode_id,rog.xnum,rog.retail_price,
+        gm.g_m_id,
+        gm.spec_id,
+        gm.only_coding,
+        gm.goods_title,
+        gs.goods_id,
+        su.unit_name,
+        pu.imgs_thumb
         FROM retail_order ro inner join retail_order_goods rog on ro.order_id=rog.order_id
         left join goods_barcode gb on rog.barcode_id=gb.barcode_id left join goods_spec gs on gb.goods_id=gs.goods_id
         left join goods_main gm on gs.g_m_id=gm.g_m_id left join sys_units su on gm.unit_id=su.sys_unit_id

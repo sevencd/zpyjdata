@@ -11,11 +11,14 @@ import java.math.BigDecimal;
 
 @Getter
 public class MmRetailOrderItem {
+    private Integer gMId;
     private String orderCode;
     private String goodsTitle;
     private String onlyCoding;
-    private String imgsOriginal;
-    private int barcodeId;
+    private String imgsThumb;
+    private Integer barcodeId;
+    private Integer specId;
+    private Integer goodsId;
     private BigDecimal retailPrice;
     private BigDecimal xnum;
     private String unitName;

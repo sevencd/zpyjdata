@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 public class ZpyjOrderItem {
     private String payId;
     private String orderId;
+    private Integer specId;
     private Integer goodsProfileId;
     private String skuId;
     private Integer barcodeId;
@@ -25,17 +26,21 @@ public class ZpyjOrderItem {
     private BigDecimal count;
     private String unitName;
     private String remark;
-    public static ZpyjOrderItem createOrderItem(String payId,String orderId,MmRetailOrderItem mmRetailOrderItem){
+
+    public static ZpyjOrderItem createOrderItem(String payId, String orderId, MmRetailOrderItem mmRetailOrderItem) {
         ZpyjOrderItem orderItem = new ZpyjOrderItem();
-        orderItem.payId=payId;
-        orderItem.orderId=orderId;
-        orderItem.skuId=mmRetailOrderItem.getOnlyCoding();
-        orderItem.barcodeId=mmRetailOrderItem.getBarcodeId();;
-        orderItem.skuName=mmRetailOrderItem.getGoodsTitle();
-        orderItem.skuImage="http://miaomai.zhenpinyijia.com"+mmRetailOrderItem.getImgsOriginal();
-        orderItem.skuPrice= BigDecimalUtil.getFenPrice(mmRetailOrderItem.getRetailPrice());
-        orderItem.count=mmRetailOrderItem.getXnum();
-        orderItem.unitName=mmRetailOrderItem.getUnitName();
+        orderItem.payId = payId;
+        orderItem.orderId = orderId;
+        orderItem.specId = mmRetailOrderItem.getSpecId();
+        orderItem.goodsProfileId = mmRetailOrderItem.getGMId();
+        orderItem.goodsId = mmRetailOrderItem.getGoodsId();
+        orderItem.skuId = mmRetailOrderItem.getOnlyCoding();
+        orderItem.barcodeId = mmRetailOrderItem.getBarcodeId();
+        orderItem.skuName = mmRetailOrderItem.getGoodsTitle();
+        orderItem.skuImage = "http://miaomai.zhenpinyijia.com" + mmRetailOrderItem.getImgsThumb();
+        orderItem.skuPrice = BigDecimalUtil.getFenPrice(mmRetailOrderItem.getRetailPrice());
+        orderItem.count = mmRetailOrderItem.getXnum();
+        orderItem.unitName = mmRetailOrderItem.getUnitName();
         return orderItem;
     }
 

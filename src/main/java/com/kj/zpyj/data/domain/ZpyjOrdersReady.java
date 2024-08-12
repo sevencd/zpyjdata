@@ -3,6 +3,8 @@ package com.kj.zpyj.data.domain;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.kj.zpyj.data.util.BigDecimalUtil;
+import com.kj.zpyj.data.util.DateUtil;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -70,4 +72,18 @@ public class ZpyjOrdersReady {
      */
     private BigDecimal subsidyAmount;
 
+    public static ZpyjOrdersReady of(String payId, Integer customerId, MmRetailOrder mmRetailOrder) {
+        ZpyjOrdersReady zpyjOrdersReady = new ZpyjOrdersReady();
+        zpyjOrdersReady.id = payId;
+        zpyjOrdersReady.orderClass = 4;
+        zpyjOrdersReady.customerId = customerId;
+        zpyjOrdersReady.storeId = mmRetailOrder.getStoresId();
+        zpyjOrdersReady.price = BigDecimalUtil.getFenPrice(mmRetailOrder.getTotal());
+        zpyjOrdersReady.placeOrderTime = DateUtil.getLocalDateTime(mmRetailOrder.getAddtime());
+        zpyjOrdersReady.payTime = DateUtil.getLocalDateTime(mmRetailOrder.getPayTime());
+        zpyjOrdersReady.payState = "PAID";
+        zpyjOrdersReady.discountAmount = BigDecimalUtil.getFenPrice(BigDecimalUtil.subtract(mmRetailOrder.getTotal(), mmRetailOrder.getDiscountPrice()));
+        zpyjOrdersReady.paidAmount = BigDecimalUtil.getFenPrice(mmRetailOrder.getDiscountPrice());
+        return zpyjOrdersReady;
+    }
 }

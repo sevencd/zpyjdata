@@ -73,4 +73,18 @@ public class ZpyjOrder {
      * 补贴金额
      */
     private BigDecimal subsidyAmount;
+
+    public static ZpyjOrder of(String orderCode, ZpyjOrdersReady zpyjOrdersReady) {
+        ZpyjOrder zpyjOrder = new ZpyjOrder();
+        zpyjOrder.orderId = orderCode;
+        zpyjOrder.orderType = OrderType.OUTLINE_RETAIL.getCode();
+        zpyjOrder.payId = zpyjOrdersReady.getId();
+        zpyjOrder.price = zpyjOrdersReady.getPrice();
+        zpyjOrder.orderState = OrderState.FINISH.name();
+        zpyjOrder.paidAmount = zpyjOrdersReady.getPaidAmount();
+        zpyjOrder.discountAmount = zpyjOrdersReady.getDiscountAmount();
+        zpyjOrder.finishedTime = zpyjOrdersReady.getPayTime();
+        return zpyjOrder;
+
+    }
 }
